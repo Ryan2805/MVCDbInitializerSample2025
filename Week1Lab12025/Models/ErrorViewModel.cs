@@ -1,4 +1,4 @@
-namespace Week1Lab12025.Models
+ namespace Week1Lab12025.Models
 {
     public class ErrorViewModel
     {

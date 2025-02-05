@@ -1,42 +1,41 @@
+using Microsoft.EntityFrameworkCore;
 using Tracker.WebAPIClient;
 using Week1Lab12025.Models;
-using Microsoft.EntityFrameworkCore;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllersWithViews();
+
+// Add DbContext
 var dbConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection String 'DefaultConnection' not found.");
 
-builder.Services.AddDbContext<UserContext>(options => 
-            options.UseSqlServer(dbConnectionString));
+builder.Services.AddDbContext<UserContext>(options =>
+    options.UseSqlServer(dbConnectionString));
 
+// Register the DbSeeder as a service
+builder.Services.AddScoped<DbSeeder>();
 
 var app = builder.Build();
 
-//Retrieve the user context class from the services container 
-
+// Retrieve the DbSeeder service and invoke the Seed method
 using (var scope = app.Services.CreateScope())
 {
-    var _ctx  = scope.ServiceProvider.GetRequiredService<UserContext>();
-    var hostenvironment = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-
-    DbSeeder dbSeeder = new DbSeeder (_ctx, hostenvironment);
+    var dbSeeder = scope.ServiceProvider.GetRequiredService<DbSeeder>();
     dbSeeder.Seed();
-
-
-
-
 }
-ActivityAPIClient.Track(StudentID: "S00237889", StudentName: "Ryan Daly",
-activityName: "Rad302 2025 Week 1 Lab 1", Task: " Database initializer setup successfully ");
 
-// Configure the HTTP request pipeline.
+// Tracking activity
+ActivityAPIClient.Track(StudentID: "S00237889", StudentName: "Ryan Daly",
+activityName: "Rad302 2025 Week 1 Lab 1", Task: "Database initializer setup successfully");
+
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -51,4 +50,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run(); 
+app.Run();
+
