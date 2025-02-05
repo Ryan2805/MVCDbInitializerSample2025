@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Tracker" Version="1.0.7-beta" />
+  </ItemGroup>
+
 </Project>
